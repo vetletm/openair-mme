@@ -28,7 +28,7 @@ spec:
     runPolicy: "Serial"
     source:
         git:
-            uri: "https://github.com/OPENAIRINTERFACE/openair-mme.git"
+            uri: "https://github.com/lionelgo/openair-mme.git"
             ref: "helm3.1-onap-sync-with-cn-split-repos"
             httpProxy: http://proxy.eurecom.fr:8080
             httpsProxy: https://proxy.eurecom.fr:8080
@@ -49,4 +49,4 @@ spec:
     output:
         to:
             kind: "ImageStreamTag"
-            name: "oai-mme:onap-0.1.0"
+            name: "oai-mme:onap-0.1.0-realm"
