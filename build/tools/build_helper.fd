@@ -362,6 +362,7 @@ install_opencoord.org_freediameter() {
       specific_packages="gcc-c++ patch libgcrypt-devel libidn-devel libpq-devel lksctp-tools lksctp-tools-devel libxml2-devel python2-devel debhelper"
     ;;
     "rhel8.2")
+    "rhel8.3")
       specific_packages="cmake3 gcc-c++ patch libgcrypt-devel libidn-devel libpq-devel lksctp-tools lksctp-tools-devel libxml2-devel python2-devel"
     ;;
   esac
