@@ -85,16 +85,16 @@ WORKDIR /openair-mme
 RUN sed -i -e "s@python@python2@" ./build/CMakeLists.txt
 WORKDIR /openair-mme/scripts
 RUN ./build_mme --check-installed-software --force
-RUN ./build_mme --clean --build-type Release --Verbose
+RUN ./build_mme --clean --build-type Debug --Verbose
 
 # Copying executable and config file
 WORKDIR /openair-mme/bin
-RUN cp /openair-mme/build/mme/build/mme /openair-mme/bin/oai_mme 
-RUN sed -i -e 's#freeDiameter/##' /openair-mme/etc/mme.conf 
-RUN cp /openair-mme/etc/mme_fd.sprint.conf /openair-mme/etc/mme_fd.conf 
-RUN sed -i -e "s#@PREFIX@/freeDiameter#@PREFIX@#g" /openair-mme/etc/mme_fd.conf
-RUN sed -i -e "s@^.*THIS_SCRIPT_PATH@#@" -e "s@\$SUDO@@" /openair-mme/scripts/check_mme_s6a_certificate
-RUN sed -i -e "s@echo_error@echo@" -e "s@echo_success@echo@" -e "s@echo_warning@echo@" /openair-mme/scripts/check_mme_s6a_certificate
+RUN cp /openair-mme/build/mme/build/mme /openair-mme/bin/oai_mme \
+    && sed -i -e 's#freeDiameter/##' /openair-mme/etc/mme.conf \ 
+    && cp /openair-mme/etc/mme_fd.sprint.conf /openair-mme/etc/mme_fd.conf \ 
+    && sed -i -e "s#@PREFIX@/freeDiameter#@PREFIX@#g" /openair-mme/etc/mme_fd.conf \
+    && sed -i -e "s@^.*THIS_SCRIPT_PATH@#@" -e "s@\$SUDO@@" /openair-mme/scripts/check_mme_s6a_certificate \
+    && sed -i -e "s@echo_error@echo@" -e "s@echo_success@echo@" -e "s@echo_warning@echo@" /openair-mme/scripts/check_mme_s6a_certificate
 
 WORKDIR /openair-mme
 RUN openssl rand -out /root/.rnd 128
