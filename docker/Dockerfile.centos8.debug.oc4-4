@@ -22,7 +22,7 @@
 #---------------------------------------------------------------------
 
 #---------------------------------------------------------------------
-# BUILDER IMAGE
+# TARGET IMAGE
 #---------------------------------------------------------------------
 FROM centos:8 as oai-mme
 
@@ -40,30 +40,6 @@ RUN yum update -y \
     psmisc \
     git
 
-# Some GIT configuration command quite useful
-RUN /bin/bash -c "if [[ -v EURECOM_PROXY ]]; then git config --global http.proxy $EURECOM_PROXY; fi"
-RUN git config --global https.postBuffer 123289600
-RUN git config --global http.sslverify false
-# In normal case, we build out of the develop branch
-RUN /bin/bash -c "if [[ -v CI_SRC_BRANCH ]]; then git clone https://github.com/lionelgo/openair-mme.git -b $CI_SRC_BRANCH /openair-mme; else git clone https://github.com/lionelgo/openair-mme.git -b develop /openair-mme; fi"
-# For CI, especially for Pull/Merge Requests, we build out of temp merge
-WORKDIR /openair-mme
-RUN /bin/bash -c "if [[ -v BUILD_FOR_CI ]]; then git config --global user.name \"OAI CI\"; fi"
-RUN /bin/bash -c "if [[ -v BUILD_FOR_CI ]]; then git config --global user.email ci@openairinterface.org; fi"
-RUN /bin/bash -c "if [[ -v BUILD_FOR_CI ]]; then git checkout -f $CI_SRC_COMMIT; fi"
-RUN /bin/bash -c "if [[ -v BUILD_FOR_CI ]]; then git merge --ff origin/$CI_DEST_BRANCH -m \"Temporary merge for CI\"; fi"
-
-# Installing and Building MME
-WORKDIR /openair-mme
-RUN sed -i -e "s@python@python2@" ./build/CMakeLists.txt
-WORKDIR /openair-mme/scripts
-RUN ./build_mme --check-installed-software --force
-RUN ./build_mme --clean --build-type Release --Verbose
-
-#---------------------------------------------------------------------
-# TARGET IMAGE
-#---------------------------------------------------------------------
-FROM centos:8 as oai-mme
 # We install some debug tools for the moment in addition of mandatory libraries
 RUN yum install -y \
     psmisc \
@@ -90,22 +66,33 @@ RUN yum install -y \
     procps-ng \
   && yum clean all -y \
   && rm -rf /var/cache/yum
+  
+# Some GIT configuration command quite useful
+RUN /bin/bash -c "if [[ -v EURECOM_PROXY ]]; then git config --global http.proxy $EURECOM_PROXY; fi"
+RUN git config --global https.postBuffer 123289600
+RUN git config --global http.sslverify false
+# In normal case, we build out of the develop branch
+RUN /bin/bash -c "if [[ -v CI_SRC_BRANCH ]]; then git clone https://github.com/lionelgo/openair-mme.git -b $CI_SRC_BRANCH /openair-mme; else git clone https://github.com/lionelgo/openair-mme.git -b develop /openair-mme; fi"
+# For CI, especially for Pull/Merge Requests, we build out of temp merge
+WORKDIR /openair-mme
+RUN /bin/bash -c "if [[ -v BUILD_FOR_CI ]]; then git config --global user.name \"OAI CI\"; fi"
+RUN /bin/bash -c "if [[ -v BUILD_FOR_CI ]]; then git config --global user.email ci@openairinterface.org; fi"
+RUN /bin/bash -c "if [[ -v BUILD_FOR_CI ]]; then git checkout -f $CI_SRC_COMMIT; fi"
+RUN /bin/bash -c "if [[ -v BUILD_FOR_CI ]]; then git merge --ff origin/$CI_DEST_BRANCH -m \"Temporary merge for CI\"; fi"
 
-# Copying executable and generated libraries
-WORKDIR /openair-mme/bin
-COPY    /openair-mme/build/mme/build/mme oai_mme
-
-# Copying template configuration files
-# The configuration folder will be flat
-WORKDIR /openair-mme/etc
-COPY    /openair-mme/etc/mme.conf .
-RUN sed -i -e 's#freeDiameter/##' mme.conf
-COPY    /openair-mme/etc/mme_fd.sprint.conf mme_fd.conf
-RUN sed -i -e "s#@PREFIX@/freeDiameter#@PREFIX@#g" mme_fd.conf
-
-# Copy the certificate generation script
+# Installing and Building MME
+WORKDIR /openair-mme
+RUN sed -i -e "s@python@python2@" ./build/CMakeLists.txt
 WORKDIR /openair-mme/scripts
-COPY    /openair-mme/scripts/check_mme_s6a_certificate .
+RUN ./build_mme --check-installed-software --force
+RUN ./build_mme --clean --build-type Release --Verbose
+
+# Copying executable and config file
+WORKDIR /openair-mme/bin
+RUN cp /openair-mme/build/mme/build/mme /openair-mme/bin/oai_mme 
+RUN sed -i -e 's#freeDiameter/##' /openair-mme/etc/mme.conf 
+RUN cp /openair-mme/etc/mme_fd.sprint.conf /openair-mme/etc/mme_fd.conf 
+RUN sed -i -e "s#@PREFIX@/freeDiameter#@PREFIX@#g" mme_fd.conf
 RUN sed -i -e "s@^.*THIS_SCRIPT_PATH@#@" -e "s@\$SUDO@@" check_mme_s6a_certificate
 RUN sed -i -e "s@echo_error@echo@" -e "s@echo_success@echo@" -e "s@echo_warning@echo@" check_mme_s6a_certificate
 
