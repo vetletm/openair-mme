@@ -361,7 +361,7 @@ install_opencoord.org_freediameter() {
     "centos8")
       specific_packages="gcc-c++ patch libgcrypt-devel libidn-devel libpq-devel lksctp-tools lksctp-tools-devel libxml2-devel python2-devel debhelper"
     ;;
-    "rhel8.2"|"rhel8.3")
+    "rhel8.2"|"rhel8.3"|"rhel8.4"|"rhel8.5")
       specific_packages="cmake3 gcc-c++ patch libgcrypt-devel libidn-devel libpq-devel lksctp-tools lksctp-tools-devel libxml2-devel python2-devel"
     ;;
   esac
