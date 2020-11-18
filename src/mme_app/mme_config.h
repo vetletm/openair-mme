@@ -75,6 +75,7 @@
 #define MME_CONFIG_STRING_S6A_CONFIG "S6A"
 #define MME_CONFIG_STRING_S6A_CONF_FILE_PATH "S6A_CONF"
 #define MME_CONFIG_STRING_S6A_HSS_HOSTNAME "HSS_HOSTNAME"
+#define MME_CONFIG_STRING_S6A_HSS_REALM    "HSS_REAL"
 #define MME_CONFIG_STRING_S6A_MME_HOSTNAME "MME_HOSTNAME"
 
 #define MME_CONFIG_STRING_SCTP_CONFIG "SCTP"
@@ -238,7 +239,8 @@ typedef struct mme_config_s {
 
   struct {
     bstring conf_file;
-    bstring hss_host_name;
+    bstring hss_fqdn;
+    bstring hss_realm;
     bstring mme_host_name;
   } s6a_config;
 

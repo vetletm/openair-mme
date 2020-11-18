@@ -91,7 +91,7 @@ int s6a_fd_new_peer(void) {
 
   OAILOG_DEBUG(LOG_S6A, "Diameter identity of MME: %s with length: %zd\n",
                fd_g_config->cnf_diamid, fd_g_config->cnf_diamid_len);
-  bstring hss_name = bstrcpy(mme_config.s6a_config.hss_host_name);
+  bstring hss_name = bstrcpy(mme_config.s6a_config.hss_fqdn);
 
   if (mme_config_unlock(&mme_config)) {
     OAILOG_ERROR(LOG_S6A, "Failed to unlock configuration\n");
