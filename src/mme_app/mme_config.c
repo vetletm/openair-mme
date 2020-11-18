@@ -294,7 +294,8 @@ void mme_config_exit(void) {
   bdestroy_wrapper(&mme_config.ip.if_name_s11);
   bdestroy_wrapper(&mme_config.ip.if_name_s10);
   bdestroy_wrapper(&mme_config.s6a_config.conf_file);
-  bdestroy_wrapper(&mme_config.s6a_config.hss_host_name);
+  bdestroy_wrapper(&mme_config.s6a_config.hss_fqdn);
+  bdestroy_wrapper(&mme_config.s6a_config.hss_realm);
   bdestroy_wrapper(&mme_config.itti_config.log_file);
 
   free_wrapper((void **)&mme_config.served_tai.plmn_mcc);
@@ -645,15 +646,29 @@ static int mme_config_parse_file(mme_config_t *config_pP) {
                                         MME_CONFIG_STRING_S6A_HSS_HOSTNAME,
                                         (const char **)&astring))) {
         if (astring != NULL) {
-          if (config_pP->s6a_config.hss_host_name) {
-            bassigncstr(config_pP->s6a_config.hss_host_name, astring);
+          if (config_pP->s6a_config.hss_fqdn) {
+            bassigncstr(config_pP->s6a_config.hss_fqdn, astring);
           } else {
-            config_pP->s6a_config.hss_host_name = bfromcstr(astring);
+            config_pP->s6a_config.hss_fqdn = bfromcstr(astring);
           }
         } else
           AssertFatal(1 == 0,
                       "You have to provide a valid HSS hostname %s=...\n",
                       MME_CONFIG_STRING_S6A_HSS_HOSTNAME);
+      }
+      if ((config_setting_lookup_string(setting,
+                                        MME_CONFIG_STRING_S6A_HSS_REALM,
+                                        (const char **)&astring))) {
+        if (astring != NULL) {
+          if (config_pP->s6a_config.hss_realm) {
+            bassigncstr(config_pP->s6a_config.hss_realm, astring);
+          } else {
+            config_pP->s6a_config.hss_realm = bfromcstr(astring);
+          }
+        } else
+          AssertFatal(1 == 0,
+                      "You have to provide a valid HSS realm %s=...\n",
+                      MME_CONFIG_STRING_S6A_HSS_REALM);
       }
 
       // todo: check if MME hostname is needed

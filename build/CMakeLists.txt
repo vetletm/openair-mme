@@ -18,6 +18,7 @@
 ###############################################################################
 
 cmake_minimum_required (VERSION 2.8)
+project (OAI-MME)
 
 #############################################
 # Base directories, compatible with legacy OAI building
@@ -26,7 +27,6 @@ set (OPENAIRCN_DIR   $ENV{OPENAIRCN_DIR})
 set (BUILD_TOP_DIR   ${OPENAIRCN_DIR}/build)
 set (OPENAIRCN_BIN_DIR ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
 
-project (OpenAirInterface)
 
 ###########################################
 # macros to define options as there is numerous options in oai
