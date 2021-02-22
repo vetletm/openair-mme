@@ -71,7 +71,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get upgrade --yes && DE
     libsctp1 \
     libconfig9 \
     libidn11 \
-    net-tools \
     iputils-ping \
     iproute2 \
   && rm -rf /var/lib/apt/lists/*
